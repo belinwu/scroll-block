@@ -5,7 +5,6 @@ import androidx.room.Room
 import com.vishal2376.scrollblock.data.local.AppDatabase
 import com.vishal2376.scrollblock.data.local.AppUsageDao
 import com.vishal2376.scrollblock.data.local.MainRepository
-import com.vishal2376.scrollblock.data.local.SummaryDao
 import com.vishal2376.scrollblock.utils.SettingsStore
 import dagger.Module
 import dagger.Provides
@@ -33,14 +32,8 @@ object AppModule {
 
 	@Provides
 	@Singleton
-	fun provideSummaryDao(database: AppDatabase): SummaryDao {
-		return database.summaryDao()
-	}
-
-	@Provides
-	@Singleton
-	fun provideMainRepository(appUsageDao: AppUsageDao, summaryDao: SummaryDao): MainRepository {
-		return MainRepository(appUsageDao, summaryDao)
+	fun provideMainRepository(appUsageDao: AppUsageDao): MainRepository {
+		return MainRepository(appUsageDao)
 	}
 
 	@Provides
