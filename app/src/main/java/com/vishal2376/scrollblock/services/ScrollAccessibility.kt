@@ -8,7 +8,7 @@ import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.vishal2376.scrollblock.data.local.AppUsageDao
+import com.vishal2376.scrollblock.data.local.MainRepository
 import com.vishal2376.scrollblock.domain.model.AppUsage
 import com.vishal2376.scrollblock.utils.NOTIFICATION_ID
 import com.vishal2376.scrollblock.utils.NotificationHelper
@@ -27,7 +27,7 @@ import kotlin.math.max
 @AndroidEntryPoint
 class ScrollAccessibility : AccessibilityService() {
 	@Inject
-	lateinit var appUsageDao: AppUsageDao
+	lateinit var repository: MainRepository
 
 	@Inject
 	lateinit var store: SettingsStore
@@ -159,7 +159,7 @@ class ScrollAccessibility : AccessibilityService() {
 		)
 
 		serviceScope.launch {
-			appUsageDao.insertAppUsage(appUsage)
+			repository.insertOrUpdateAppUsage(appUsage)
 			resetAppUsage()
 		}
 	}
