@@ -12,6 +12,7 @@ import com.vishal2376.scrollblock.presentation.main.MainEvent
 import com.vishal2376.scrollblock.presentation.main.MainState
 import com.vishal2376.scrollblock.utils.Constants
 import com.vishal2376.scrollblock.utils.SettingsStore
+import com.vishal2376.scrollblock.utils.getCurrentWeekDateRange
 import com.vishal2376.scrollblock.utils.openMail
 import com.vishal2376.scrollblock.utils.openUrl
 import com.vishal2376.scrollblock.utils.shareApp
@@ -28,6 +29,9 @@ class MainViewModel @Inject constructor(
 	var appState by mutableStateOf(MainState())
 
 	var todayAppUsageList = repository.getAppUsageByDate(LocalDate.now().toString())
+
+	private val dateRange = getCurrentWeekDateRange()
+	var thisWeekAppUsageList = repository.getAppUsageByDateRange(dateRange.first, dateRange.second)
 
 	// Main App Events
 	fun onEvent(event: MainEvent) {
