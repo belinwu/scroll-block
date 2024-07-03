@@ -23,6 +23,8 @@ fun NavGraph(viewModel: MainViewModel) {
 	val navController = rememberNavController()
 
 	val todayAppUsage by viewModel.todayAppUsageList.collectAsState(initial = emptyList())
+	val thisWeekAppUsage by viewModel.thisWeekAppUsageList.collectAsState(initial = emptyList())
+
 	val isServiceEnabled by remember {
 		mutableStateOf(isAccessibilityServiceEnabled(context))
 	}
@@ -67,7 +69,7 @@ fun NavGraph(viewModel: MainViewModel) {
 		}
 
 		composable(Screen.AnalyticScreen.name) {
-			AnalyticScreen(onBack = { navController.navigateUp() })
+			AnalyticScreen(appUsage = thisWeekAppUsage, onBack = { navController.navigateUp() })
 		}
 	}
 }

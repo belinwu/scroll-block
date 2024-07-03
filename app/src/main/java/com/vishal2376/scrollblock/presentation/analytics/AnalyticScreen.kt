@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vishal2376.scrollblock.R
+import com.vishal2376.scrollblock.domain.model.AppUsage
 import com.vishal2376.scrollblock.domain.model.TimeWastedInfo
 import com.vishal2376.scrollblock.presentation.analytics.components.SummaryItemComponent
 import com.vishal2376.scrollblock.presentation.common.CustomPieChart
@@ -51,11 +52,18 @@ import com.vishal2376.scrollblock.presentation.home.components.PieChartIndicator
 import com.vishal2376.scrollblock.ui.theme.ScrollBlockTheme
 import com.vishal2376.scrollblock.ui.theme.pieChartColors
 import com.vishal2376.scrollblock.ui.theme.white
+import com.vishal2376.scrollblock.utils.formatNumber
 import com.vishal2376.scrollblock.utils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnalyticScreen(onBack: () -> Unit) {
+fun AnalyticScreen(appUsage: List<AppUsage>, onBack: () -> Unit) {
+
+	val totalTimeWasted = appUsage.sumOf { it.timeSpent }
+	val totalScrollCount = appUsage.sumOf { it.scrollCount }
+	val totalAppOpenCount = appUsage.sumOf { it.appOpenCount }
+	val totalAppScrollBlocked = appUsage.sumOf { it.scrollsBlocked }
+
 	Scaffold(topBar = {
 		TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
 			title = {
@@ -188,13 +196,13 @@ fun AnalyticScreen(onBack: () -> Unit) {
 				) {
 					SummaryItemComponent(
 						title = "Time\nWasted",
-						info = "13h 40m",
+						info = formatTime(totalTimeWasted),
 						icon = R.drawable.clock,
 						index = 1
 					)
 					SummaryItemComponent(
 						title = "Total\nScrolls",
-						info = "12.3k",
+						info = formatNumber(totalScrollCount.toLong()),
 						icon = R.drawable.scroll,
 						index = 2
 					)
@@ -209,13 +217,13 @@ fun AnalyticScreen(onBack: () -> Unit) {
 				) {
 					SummaryItemComponent(
 						title = "Scroll\nBlocked",
-						info = "3.1k",
+						info = formatNumber(totalAppScrollBlocked.toLong()),
 						icon = R.drawable.shield,
 						index = 3
 					)
 					SummaryItemComponent(
 						title = "App\nOpened",
-						info = "1.8k",
+						info = formatNumber(totalAppOpenCount.toLong()),
 						icon = R.drawable.dashboard,
 						index = 4
 					)
@@ -229,6 +237,6 @@ fun AnalyticScreen(onBack: () -> Unit) {
 @Composable
 private fun AnalyticScreenPreview() {
 	ScrollBlockTheme {
-		AnalyticScreen({})
+		AnalyticScreen(emptyList(), {})
 	}
 }
