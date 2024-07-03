@@ -5,6 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import com.vishal2376.scrollblock.R
 import com.vishal2376.scrollblock.domain.model.AppUsage
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 val instagramPackage = listOf(SupportedApps.Instagram.packageName)
@@ -20,6 +23,30 @@ fun getAppTimeSpent(
 	allAppUsage: List<AppUsage>, packageName: List<String>
 ): Int {
 	return allAppUsage.filter { it.packageName in packageName }.sumOf { it.timeSpent }
+}
+
+fun getCurrentWeekDateRange(): Pair<String, String> {
+	val today = LocalDate.now()
+	val startOfWeek = today.with(DayOfWeek.MONDAY)
+	val endOfWeek = today.with(DayOfWeek.SUNDAY)
+	val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+	val startDate = startOfWeek.format(formatter)
+	val endDate = endOfWeek.format(formatter)
+
+	return Pair(startDate, endDate)
+}
+
+fun getCurrentMonthDateRange(): Pair<String, String> {
+	val today = LocalDate.now()
+	val startOfMonth = today.withDayOfMonth(1)
+	val endOfMonth = today.withDayOfMonth(today.lengthOfMonth())
+	val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+	val startDate = startOfMonth.format(formatter)
+	val endDate = endOfMonth.format(formatter)
+
+	return Pair(startDate, endDate)
 }
 
 fun openMail(context: Context, title: String) {
