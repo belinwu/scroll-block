@@ -27,4 +27,7 @@ interface AppUsageDao {
 
 	@Query("SELECT * FROM AppUsage WHERE date = :date")
 	fun getAppUsageByDate(date: String): Flow<List<AppUsage>>
+
+	@Query("SELECT * FROM AppUsage WHERE date BETWEEN :startDate AND :endDate")
+	fun getAppUsageByDateRange(startDate: String, endDate: String): Flow<List<AppUsage>>
 }

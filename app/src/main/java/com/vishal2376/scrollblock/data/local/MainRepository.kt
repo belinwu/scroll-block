@@ -21,6 +21,10 @@ class MainRepository @Inject constructor(
 		return appUsageDao.getAppUsageByPackageName(packageName)
 	}
 
+	fun getAppUsageByDateRange(startDate: String, endDate: String): Flow<List<AppUsage>> {
+		return appUsageDao.getAppUsageByDateRange(startDate, endDate)
+	}
+
 	suspend fun insertOrUpdateAppUsage(appUsage: AppUsage) {
 		val existingUsage =
 			appUsageDao.getAppUsageByPackageAndDate(
