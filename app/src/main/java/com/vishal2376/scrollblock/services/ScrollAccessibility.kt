@@ -40,6 +40,7 @@ class ScrollAccessibility : AccessibilityService() {
 	companion object {
 		private const val MIN_VALID_SCROLL_COUNT = 3
 		private const val MIN_VALID_TIME_SPENT = 5
+		private const val MIN_VALID_APP_SCROLL_BLOCKED = 1
 	}
 
 	private var appStatus = mapOf(
@@ -95,8 +96,10 @@ class ScrollAccessibility : AccessibilityService() {
 
 				if (isValidAppUsage()) {
 					// Calculate App Usage
-					endTime = LocalTime.now().toSecondOfDay()
-					appTimeSpent = max(0, endTime - startTime)
+					if (startTime != 0) {
+						endTime = LocalTime.now().toSecondOfDay()
+						appTimeSpent = max(0, endTime - startTime)
+					}
 					appOpenCount++
 
 					// Save App Usage in DB
@@ -129,6 +132,10 @@ class ScrollAccessibility : AccessibilityService() {
 								}
 							} else {
 								performGlobalAction(GLOBAL_ACTION_BACK)
+
+								//detect scroll blocked
+								appScrollBlocked++;
+
 								Toast.makeText(
 									this@ScrollAccessibility, "Feature Blocked", Toast.LENGTH_SHORT
 								).show()
@@ -144,8 +151,9 @@ class ScrollAccessibility : AccessibilityService() {
 		val currentTime = LocalTime.now().toSecondOfDay()
 		val isValidTimeSpent = startTime != 0 && ((currentTime - startTime) >= MIN_VALID_TIME_SPENT)
 		val isValidScrollCount = appScrollCount >= MIN_VALID_SCROLL_COUNT
+		val isValidAppScrollBlocked = appScrollBlocked >= MIN_VALID_APP_SCROLL_BLOCKED
 
-		return appPackageName.isNotEmpty() && (isValidTimeSpent || isValidScrollCount)
+		return appPackageName.isNotEmpty() && (isValidTimeSpent || isValidScrollCount || isValidAppScrollBlocked)
 	}
 
 	private fun saveAppUsage() {
