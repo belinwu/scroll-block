@@ -187,8 +187,10 @@ class ScrollAccessibility : AccessibilityService() {
 		val intent = Intent(this, ScrollAccessibility::class.java)
 		ContextCompat.startForegroundService(this, intent)
 
+		val notificationHelper = NotificationHelper(this@ScrollAccessibility)
+		notificationHelper.createNotificationChannel()
+
 		Handler(Looper.getMainLooper()).postDelayed({
-			val notificationHelper = NotificationHelper(this@ScrollAccessibility)
 			startForeground(NOTIFICATION_ID, notificationHelper.buildNotification())
 		}, 1000)
 	}
