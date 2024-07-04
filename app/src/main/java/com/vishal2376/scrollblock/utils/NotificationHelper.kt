@@ -20,7 +20,7 @@ class NotificationHelper(private val context: Context) {
 	fun buildNotification(): Notification {
 
 		return NotificationCompat.Builder(context, CHANNEL_ID)
-			.setSmallIcon(R.drawable.ic_notification)
+			.setSmallIcon(R.drawable.app_logo)
 			.setContentTitle("Scroll Block is Active")
 			.setContentText("Accessibility Service is running in background")
 			.setPriority(NotificationCompat.PRIORITY_DEFAULT)
