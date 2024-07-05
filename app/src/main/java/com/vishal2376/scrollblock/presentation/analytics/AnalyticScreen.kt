@@ -50,10 +50,18 @@ import com.vishal2376.scrollblock.presentation.common.h1style
 import com.vishal2376.scrollblock.presentation.common.h2style
 import com.vishal2376.scrollblock.presentation.home.components.PieChartIndicatorComponent
 import com.vishal2376.scrollblock.ui.theme.ScrollBlockTheme
-import com.vishal2376.scrollblock.ui.theme.pieChartColors
+import com.vishal2376.scrollblock.ui.theme.instagramColor
+import com.vishal2376.scrollblock.ui.theme.linkedinColor
+import com.vishal2376.scrollblock.ui.theme.snapchatColor
 import com.vishal2376.scrollblock.ui.theme.white
+import com.vishal2376.scrollblock.ui.theme.youtubeColor
 import com.vishal2376.scrollblock.utils.formatNumber
 import com.vishal2376.scrollblock.utils.formatTime
+import com.vishal2376.scrollblock.utils.getAppTimeSpent
+import com.vishal2376.scrollblock.utils.instagramPackage
+import com.vishal2376.scrollblock.utils.linkedinPackage
+import com.vishal2376.scrollblock.utils.snapchatPackage
+import com.vishal2376.scrollblock.utils.youtubePackage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +71,19 @@ fun AnalyticScreen(appUsage: List<AppUsage>, onBack: () -> Unit) {
 	val totalScrollCount = appUsage.sumOf { it.scrollCount }
 	val totalAppOpenCount = appUsage.sumOf { it.appOpenCount }
 	val totalAppScrollBlocked = appUsage.sumOf { it.scrollsBlocked }
+
+	val instagramTimeSpent = getAppTimeSpent(appUsage, instagramPackage)
+	val youtubeTimeSpent = getAppTimeSpent(appUsage, youtubePackage)
+	val linkedinTimeSpent = getAppTimeSpent(appUsage, linkedinPackage)
+	val snapchatTimeSpent = getAppTimeSpent(appUsage, snapchatPackage)
+
+	val timeWastedList = listOf(
+		TimeWastedInfo("Instagram", instagramTimeSpent, instagramColor),
+		TimeWastedInfo("Youtube", youtubeTimeSpent, youtubeColor),
+		TimeWastedInfo("Linkedin", linkedinTimeSpent, linkedinColor),
+		TimeWastedInfo("Snapchat", snapchatTimeSpent, snapchatColor)
+	).filter { it.timeWasted > 0 }
+
 
 	Scaffold(topBar = {
 		TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
@@ -106,24 +127,12 @@ fun AnalyticScreen(appUsage: List<AppUsage>, onBack: () -> Unit) {
 					.background(blackGradient),
 				horizontalAlignment = Alignment.CenterHorizontally,
 			) {
-				val timeWastedList = listOf(
-					TimeWastedInfo("Instagram", 30000),
-					TimeWastedInfo("Youtube", 13000),
-					TimeWastedInfo("Linkedin", 5000),
-					TimeWastedInfo("Snapchat", 1200)
-				)
-
-				val totalTimeWasted =
-					timeWastedList.filter { it.timeWasted > 0 }.map { it.timeWasted }
-
 
 				// pie chart
 				Box(
 					modifier = Modifier
 						.clip(CircleShape)
-						.clickable {
-//							onNavigate(Screen.AnalyticScreen.name)
-						},
+						.clickable {},
 					contentAlignment = Alignment.Center
 				) {
 					Column(
@@ -136,14 +145,14 @@ fun AnalyticScreen(appUsage: List<AppUsage>, onBack: () -> Unit) {
 							style = descriptionStyle
 						)
 						Text(
-							text = formatTime(totalTimeWasted.sum()),
+							text = formatTime(totalTimeWasted),
 							textAlign = TextAlign.Center,
 							fontSize = 25.sp,
 							fontFamily = fontMontserrat,
 						)
 					}
 					CustomPieChart(
-						data = totalTimeWasted, pieChartSize = 190.dp
+						data = timeWastedList, pieChartSize = 190.dp
 					)
 				}
 
@@ -162,7 +171,7 @@ fun AnalyticScreen(appUsage: List<AppUsage>, onBack: () -> Unit) {
 						PieChartIndicatorComponent(
 							appName = it.name,
 							time = it.timeWasted,
-							color = pieChartColors[timeWastedList.indexOf(it) % pieChartColors.size]
+							color = it.color
 						)
 					}
 				}

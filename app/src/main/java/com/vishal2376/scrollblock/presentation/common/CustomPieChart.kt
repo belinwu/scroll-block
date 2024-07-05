@@ -14,14 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.vishal2376.scrollblock.ui.theme.pieChartColors
+import com.vishal2376.scrollblock.domain.model.TimeWastedInfo
 
 @Composable
 fun CustomPieChart(
-	data: List<Int>,
+	data: List<TimeWastedInfo>,
 	arcWidth: Dp = 30.dp,
 	startAngle: Float = -180f,
 	pieChartSize: Dp = 200.dp,
@@ -29,13 +28,13 @@ fun CustomPieChart(
 	gapDegrees: Float = 26f
 ) {
 	// calculate each arc value
-	val totalSum = data.sum()
+	val totalSum = data.sumOf { it.timeWasted }
 	val totalGaps = gapDegrees * data.size
 	val availableAngle = 360f - totalGaps
 	val arcValues = mutableListOf<Float>()
 
-	data.forEachIndexed { index, value ->
-		val arc = value.toFloat() / totalSum.toFloat() * availableAngle
+	data.forEachIndexed { index, info ->
+		val arc = info.timeWasted.toFloat() / totalSum.toFloat() * availableAngle
 		arcValues.add(index, arc)
 	}
 
@@ -48,8 +47,6 @@ fun CustomPieChart(
 	}
 
 	// draw pie chart
-	val totalColors = pieChartColors.size
-
 	Column(
 		modifier = Modifier.size(pieChartSize * 1.4f),
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,7 +59,7 @@ fun CustomPieChart(
 		) {
 			arcValues.forEachIndexed { index, arcValue ->
 				drawArc(
-					color = pieChartColors[index % totalColors],
+					color = data[index].color,
 					startAngle = newStartAngle,
 					useCenter = false,
 					sweepAngle = arcValue * animationProgress.value,
@@ -72,12 +69,4 @@ fun CustomPieChart(
 			}
 		}
 	}
-}
-
-
-@Preview
-@Composable
-fun CustomPieChartPreview() {
-	val time = listOf<Int>(31, 24, 8)
-	CustomPieChart(time)
 }

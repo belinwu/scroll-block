@@ -67,10 +67,11 @@ import com.vishal2376.scrollblock.presentation.main.MainEvent
 import com.vishal2376.scrollblock.presentation.main.MainState
 import com.vishal2376.scrollblock.presentation.navigation.Screen
 import com.vishal2376.scrollblock.ui.theme.ScrollBlockTheme
-import com.vishal2376.scrollblock.ui.theme.black200
-import com.vishal2376.scrollblock.ui.theme.blue
-import com.vishal2376.scrollblock.ui.theme.pieChartColors
+import com.vishal2376.scrollblock.ui.theme.instagramColor
+import com.vishal2376.scrollblock.ui.theme.linkedinColor
+import com.vishal2376.scrollblock.ui.theme.snapchatColor
 import com.vishal2376.scrollblock.ui.theme.white
+import com.vishal2376.scrollblock.ui.theme.youtubeColor
 import com.vishal2376.scrollblock.utils.formatTime
 import com.vishal2376.scrollblock.utils.getAppTimeSpent
 import com.vishal2376.scrollblock.utils.instagramPackage
@@ -103,16 +104,14 @@ fun HomeScreen(
 	val linkedinTimeSpent = getAppTimeSpent(todayAppUsage, linkedinPackage)
 	val snapchatTimeSpent = getAppTimeSpent(todayAppUsage, snapchatPackage)
 
-	//    val groupedData = allAppUsage.groupBy { it.packageName }
-
 	val timeWastedList = listOf(
-		TimeWastedInfo("Instagram", instagramTimeSpent),
-		TimeWastedInfo("Youtube", youtubeTimeSpent),
-		TimeWastedInfo("Linkedin", linkedinTimeSpent),
-		TimeWastedInfo("Snapchat", snapchatTimeSpent)
-	)
+		TimeWastedInfo("Instagram", instagramTimeSpent, instagramColor),
+		TimeWastedInfo("Youtube", youtubeTimeSpent, youtubeColor),
+		TimeWastedInfo("Linkedin", linkedinTimeSpent, linkedinColor),
+		TimeWastedInfo("Snapchat", snapchatTimeSpent, snapchatColor)
+	).filter { it.timeWasted > 0 }
 
-	val totalTimeWasted = timeWastedList.filter { it.timeWasted > 0 }.map { it.timeWasted }
+	val totalTimeWasted = todayAppUsage.sumOf { it.timeSpent }
 
 	val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
@@ -174,7 +173,7 @@ fun HomeScreen(
 						horizontalAlignment = Alignment.CenterHorizontally,
 					) {
 						// pie chart
-						if (totalTimeWasted.sum() != 0) {
+						if (totalTimeWasted != 0) {
 							Box(
 								modifier = Modifier
 									.clip(CircleShape)
@@ -193,14 +192,14 @@ fun HomeScreen(
 										style = descriptionStyle
 									)
 									Text(
-										text = formatTime(totalTimeWasted.sum()),
+										text = formatTime(totalTimeWasted),
 										textAlign = TextAlign.Center,
 										fontSize = 28.sp,
 										fontFamily = fontMontserrat,
 									)
 								}
 								CustomPieChart(
-									data = totalTimeWasted, pieChartSize = 175.dp
+									data = timeWastedList, pieChartSize = 175.dp
 								)
 							}
 						} else {
@@ -220,7 +219,8 @@ fun HomeScreen(
 										.background(
 											Brush.verticalGradient(
 												listOf(
-													Color.Transparent, MaterialTheme.colorScheme.secondary
+													Color.Transparent,
+													MaterialTheme.colorScheme.secondary
 												)
 											)
 										)
@@ -244,7 +244,7 @@ fun HomeScreen(
 								PieChartIndicatorComponent(
 									appName = it.name,
 									time = it.timeWasted,
-									color = pieChartColors[timeWastedList.indexOf(it) % pieChartColors.size]
+									color = it.color
 								)
 							}
 						}
